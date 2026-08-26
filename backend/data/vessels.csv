@@ -1,0 +1,5 @@
+id,name,capacity,draft_limit,loa_limit,beam_limit,suitability,cost_factor
+capesize,Capesize,"120,000 - 180,000 DWT",18.5,290.0,45.0,"Heavy coal, iron ore. Best for Paradip & Gangavaram deep berths only.",1.0
+panamax,Panamax,"60,000 - 80,000 DWT",14.5,225.0,32.2,"Coal, grains. Highly versatile, accepted at most East Coast ports.",1.3
+supramax,Supramax / Ultramax,"50,000 - 60,000 DWT",12.8,200.0,32.2,"Bulk cargo, gears onboard. Excellent for smaller draft ports like Haldia.",1.5
+handysize,Handysize,"15,000 - 35,000 DWT",10.0,170.0,27.0,General dry bulk. Essential for Sagar-Sandheads lighterage and Haldia.,1.8
