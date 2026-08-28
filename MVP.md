@@ -124,3 +124,31 @@ The optimization component will determine:
 - Amount secured later
 - Vessel/chartering option selected
 - Allocation between available options where applicable.
+
+## 9. Optimization Objective
+
+The system will seek a shipping strategy that balances:
+
+- Expected shipping cost
+- Downside risk
+- Capacity/port constraints
+- Delivery requirements
+
+The initial objective will be based on a risk-adjusted cost
+function.
+
+## 10. Initial Assumptions
+
+For the MVP:
+
+1. The cargo requirement is known.
+2. Origin and destination are known.
+3. The delivery window is known.
+4. Historical data can be used as a proxy for future market behavior.
+5. Vessel characteristics are approximately stable over the
+   modelling period.
+6. Port constraints can be represented using available public
+   information.
+7. The first prototype will focus on a single origin-destination
+   route.
+8. The model will clearly distinguish real data from assumptions.
