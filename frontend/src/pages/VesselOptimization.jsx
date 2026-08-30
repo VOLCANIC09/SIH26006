@@ -5,6 +5,7 @@ import { ShieldCheck, ShieldAlert, Sparkles, Scale, Info, DollarSign, Calendar }
 
 export default function VesselOptimization() {
   const [ports, setPorts] = useState({ load: [], discharge: [] });
+  const [vessels, setVessels] = useState([]);
   const [loadPort, setLoadPort] = useState('');
   const [dischargePort, setDischargePort] = useState('');
   const [parcelSize, setParcelSize] = useState('70000'); // tons default
@@ -13,17 +14,21 @@ export default function VesselOptimization() {
   const [optimizationResult, setOptimizationResult] = useState(null);
 
   useEffect(() => {
-    async function loadPorts() {
+    async function loadInitialData() {
       try {
-        const portsData = await apiService.getPorts();
+        const [portsData, vesselsData] = await Promise.all([
+          apiService.getPorts(),
+          apiService.getVessels()
+        ]);
         setPorts(portsData);
+        setVessels(vesselsData);
         if (portsData.load.length > 0) setLoadPort(portsData.load[0].id);
         if (portsData.discharge.length > 0) setDischargePort(portsData.discharge[0].id);
       } catch (err) {
-        console.error("Error loading ports", err);
+        console.error("Error loading ports and vessels", err);
       }
     }
-    loadPorts();
+    loadInitialData();
   }, []);
 
   const handleOptimize = async (e) => {
@@ -171,23 +176,25 @@ export default function VesselOptimization() {
 
             {/* List of Vessels detailed cards */}
             <div className="grid-cols-2 vessels-spec-list">
-              {optimizationResult.results.map(res => (
-                <VesselCard 
-                  key={res.vesselId} 
-                  vessel={{
-                    ...res,
-                    ...apiService.vessels ? { suitability: "No Info Available" } : {}, // Safe reference
-                    name: res.vesselName,
-                    capacity: apiService.vessels ? "DWT Specs loaded" : "",
-                    draftLimit: res.constraints.draft.required,
-                    loaLimit: res.constraints.loa.required,
-                    beamLimit: res.constraints.beam.required,
-                    suitability: "Check matrix suitability details in the table.",
-                    efficiencyScore: res.efficiencyScore
-                  }}
-                  isRecommended={optimizationResult.recommendedVessel && res.vesselId === optimizationResult.recommendedVessel.vesselId}
-                />
-              ))}
+              {optimizationResult.results.map(res => {
+                const vesselDetail = vessels.find(v => v.id === res.vesselId);
+                return (
+                  <VesselCard 
+                    key={res.vesselId} 
+                    vessel={{
+                      ...res,
+                      name: res.vesselName,
+                      capacity: vesselDetail?.capacity || `${res.vesselName} DWT Spec`,
+                      draftLimit: res.constraints.draft.required,
+                      loaLimit: res.constraints.loa.required,
+                      beamLimit: res.constraints.beam.required,
+                      suitability: vesselDetail?.suitability || "Check matrix suitability details in the table.",
+                      efficiencyScore: res.efficiencyScore
+                    }}
+                    isRecommended={optimizationResult.recommendedVessel && res.vesselId === optimizationResult.recommendedVessel.vesselId}
+                  />
+                );
+              })}
             </div>
           </div>
 
@@ -208,38 +215,42 @@ export default function VesselOptimization() {
                     </tr>
                   </thead>
                   <tbody>
-                    {optimizationResult.results.map(res => (
-                      <tr key={res.vesselId} className={res.feasible ? '' : 'disabled-row'}>
-                        <td className="m-vessel-name">{res.vesselName}</td>
-                        <td>
-                          {res.constraints.draft.ok ? (
-                            <span className="txt-success">OK ({res.constraints.draft.required}m)</span>
-                          ) : (
-                            <span className="txt-danger">Exceeds ({res.constraints.draft.required}m)</span>
-                          )}
-                        </td>
-                        <td>
-                          {res.constraints.loa.ok ? (
-                            <span className="txt-success">OK ({res.constraints.loa.required}m)</span>
-                          ) : (
-                            <span className="txt-danger">Exceeds ({res.constraints.loa.required}m)</span>
-                          )}
-                        </td>
-                        <td>{res.transitDays} d</td>
-                        <td>
-                          {res.feasible ? (
-                            <span>${(res.waitingDays * 18000 * (res.costPerTon / 10)).toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                          ) : 'N/A'}
-                        </td>
-                        <td className="m-cost">
-                          {res.feasible ? (
-                            <strong>${res.costPerTon}</strong>
-                          ) : (
-                            <span className="txt-muted">Blocked</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                    {optimizationResult.results.map(res => {
+                      const dailyDemurrage = res.vesselId === 'capesize' ? 38000 : res.vesselId === 'panamax' ? 22000 : res.vesselId === 'supramax' ? 18500 : 14000;
+                      const demurrageTotal = Math.round(res.waitingDays * dailyDemurrage);
+                      return (
+                        <tr key={res.vesselId} className={res.feasible ? '' : 'disabled-row'}>
+                          <td className="m-vessel-name">{res.vesselName}</td>
+                          <td>
+                            {res.constraints.draft.ok ? (
+                              <span className="txt-success">OK ({res.constraints.draft.required}m)</span>
+                            ) : (
+                              <span className="txt-danger">Exceeds ({res.constraints.draft.required}m)</span>
+                            )}
+                          </td>
+                          <td>
+                            {res.constraints.loa.ok ? (
+                              <span className="txt-success">OK ({res.constraints.loa.required}m)</span>
+                            ) : (
+                              <span className="txt-danger">Exceeds ({res.constraints.loa.required}m)</span>
+                            )}
+                          </td>
+                          <td>{res.transitDays} d</td>
+                          <td>
+                            {res.feasible ? (
+                              <span>${demurrageTotal.toLocaleString()}</span>
+                            ) : 'N/A'}
+                          </td>
+                          <td className="m-cost">
+                            {res.feasible ? (
+                              <strong>${res.costPerTon}</strong>
+                            ) : (
+                              <span className="txt-muted">Blocked</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 import ForecastChart from '../components/ForecastChart';
 import ForecastForm from '../components/forecast/ForecastForm';
+import { TrendingUp, DollarSign, Activity } from 'lucide-react';
 
 export default function Forecast() {
   const [routes, setRoutes] = useState([]);

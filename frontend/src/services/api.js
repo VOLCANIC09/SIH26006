@@ -168,117 +168,187 @@ const mockDb = {
   ]
 };
 
+const API_BASE = (import.meta.env?.VITE_API_URL || '/api').replace(/\/$/, '');
+
+/**
+ * Helper to execute API requests with offline network-failure fallback.
+ * Only network/connection errors (e.g. backend server offline, connection refused)
+ * fall back to mock data. HTTP response errors (4xx/5xx) throw explicitly.
+ */
+async function requestWithFallback(endpoint, mockFallbackFn, options = {}) {
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${endpoint}`, options);
+  } catch (networkError) {
+    // Network / connection failure (e.g. backend server offline, connection refused)
+    console.warn(`[FreightIQ API] Network connection failed for ${endpoint}. Using offline fallback:`, networkError.message);
+    return await mockFallbackFn();
+  }
+
+  // If the server answered, validate the HTTP status
+  if (!response.ok) {
+    let errorDetail = `HTTP ${response.status} ${response.statusText}`;
+    try {
+      const body = await response.json();
+      if (body) {
+        errorDetail = body.detail || body.message || JSON.stringify(body);
+      }
+    } catch {
+      // Body is not JSON
+    }
+    throw new Error(`API Error [${response.status}] for ${endpoint}: ${typeof errorDetail === 'object' ? JSON.stringify(errorDetail) : errorDetail}`);
+  }
+
+  return await response.json();
+}
+
 // API Services object
 export const apiService = {
   getVessels: async () => {
-    await sleep(400);
-    return mockDb.vessels;
+    return requestWithFallback('/vessels', async () => {
+      await sleep(200);
+      return mockDb.vessels;
+    });
   },
 
   getPorts: async () => {
-    await sleep(400);
-    return mockDb.ports;
+    return requestWithFallback('/ports', async () => {
+      await sleep(200);
+      return mockDb.ports;
+    });
   },
 
   getRoutes: async () => {
-    await sleep(300);
-    return mockDb.routes.map(r => ({
-      ...r,
-      originName: mockDb.ports.load.find(p => p.id === r.origin)?.name || r.origin,
-      destinationName: mockDb.ports.discharge.find(p => p.id === r.destination)?.name || r.destination
-    }));
+    return requestWithFallback('/routes', async () => {
+      await sleep(200);
+      return mockDb.routes.map(r => ({
+        ...r,
+        originName: mockDb.ports.load.find(p => p.id === r.origin)?.name || r.origin,
+        destinationName: mockDb.ports.discharge.find(p => p.id === r.destination)?.name || r.destination
+      }));
+    });
   },
 
   getRatesData: async (routeId, vesselId) => {
-    await sleep(500);
-    return mockDb.getFreightRates(routeId, vesselId);
+    const query = `?routeId=${encodeURIComponent(routeId)}&vesselId=${encodeURIComponent(vesselId)}`;
+    return requestWithFallback(`/forecast${query}`, async () => {
+      await sleep(250);
+      return mockDb.getFreightRates(routeId, vesselId);
+    });
   },
 
   getRisks: async () => {
-    await sleep(350);
-    return mockDb.risks;
+    return requestWithFallback('/risks', async () => {
+      await sleep(200);
+      return mockDb.risks;
+    });
   },
 
   getRecommendations: async () => {
-    await sleep(450);
-    return mockDb.recommendations.map(rec => {
-      const route = mockDb.routes.find(r => r.id === rec.routeId);
-      const origin = mockDb.ports.load.find(p => p.id === route?.origin)?.name || '';
-      const dest = mockDb.ports.discharge.find(p => p.id === route?.destination)?.name || '';
-      return {
-        ...rec,
-        routeLabel: route ? `${origin} ➔ ${dest}` : 'Global Route'
-      };
+    return requestWithFallback('/recommendations', async () => {
+      await sleep(200);
+      return mockDb.recommendations.map(rec => {
+        const route = mockDb.routes.find(r => r.id === rec.routeId);
+        const origin = mockDb.ports.load.find(p => p.id === route?.origin)?.name || '';
+        const dest = mockDb.ports.discharge.find(p => p.id === route?.destination)?.name || '';
+        return {
+          ...rec,
+          routeLabel: route ? `${origin} ➔ ${dest}` : 'Global Route'
+        };
+      });
     });
   },
 
   // Interactive Vessel Optimizer Simulator
   optimizeVessel: async (originId, destId, parcelSize) => {
-    await sleep(600);
-    const size = parseFloat(parcelSize) || 50000;
-    const dest = mockDb.ports.discharge.find(p => p.id === destId);
-    const origin = mockDb.ports.load.find(p => p.id === originId);
-    
-    if (!dest || !origin) {
-      throw new Error("Invalid ports selected");
-    }
-
-    const transitDays = origin.transitDays;
-    
-    // Evaluate options
-    const results = mockDb.vessels.map(v => {
-      // Check physical draft constraints at both load and discharge port
-      const draftOk = (v.draftLimit <= dest.draft) && (v.draftLimit <= origin.draft);
-      const loaOk = (v.loaLimit <= dest.loa);
-      const beamOk = (v.beamLimit <= dest.beam);
-      const feasible = draftOk && loaOk && beamOk;
-
-      // Calculate days in port based on cargo size and discharge handling rate
-      const dischargeDays = parseFloat((size / dest.handlingRate).toFixed(1));
-      const loadDays = parseFloat((size / origin.handlingRate).toFixed(1));
-      const totalDays = transitDays + dischargeDays + loadDays + dest.waitingDays;
-
-      // Base freight cost per ton (simulated)
-      const baseFreightPerTon = 22.0 * v.costFactor * (transitDays / 15);
-      const demurrageRate = 18000 * v.costFactor; // $/day
-      const demurrageCost = dest.waitingDays * demurrageRate;
+    const query = `?originId=${encodeURIComponent(originId)}&destId=${encodeURIComponent(destId)}&parcelSize=${encodeURIComponent(parcelSize)}`;
+    return requestWithFallback(`/vessels/optimize${query}`, async () => {
+      await sleep(300);
+      const size = parseFloat(parcelSize) || 50000;
+      const dest = mockDb.ports.discharge.find(p => p.id === destId);
+      const origin = mockDb.ports.load.find(p => p.id === originId);
       
-      const totalFreightCost = size * baseFreightPerTon;
-      const totalCost = totalFreightCost + demurrageCost;
-      const costPerTon = parseFloat((totalCost / size).toFixed(2));
+      if (!dest || !origin) {
+        throw new Error("Invalid ports selected");
+      }
+
+      const transitDays = origin.transitDays;
+      
+      // Evaluate options
+      const results = mockDb.vessels.map(v => {
+        // Check physical draft constraints at both load and discharge port
+        const draftOk = (v.draftLimit <= dest.draft) && (v.draftLimit <= origin.draft);
+        const loaOk = (v.loaLimit <= dest.loa);
+        const beamOk = (v.beamLimit <= dest.beam);
+        const feasible = draftOk && loaOk && beamOk;
+
+        // Calculate days in port based on cargo size and discharge handling rate
+        const dischargeDays = parseFloat((size / dest.handlingRate).toFixed(1));
+        const loadDays = parseFloat((size / origin.handlingRate).toFixed(1));
+        const totalDays = transitDays + dischargeDays + loadDays + dest.waitingDays;
+
+        // Base freight cost per ton (simulated)
+        const baseFreightPerTon = 22.0 * v.costFactor * (transitDays / 15);
+        const demurrageRate = 18000 * v.costFactor; // $/day
+        const demurrageCost = dest.waitingDays * demurrageRate;
+        
+        const totalFreightCost = size * baseFreightPerTon;
+        const totalCost = totalFreightCost + demurrageCost;
+        const costPerTon = parseFloat((totalCost / size).toFixed(2));
+
+        return {
+          vesselId: v.id,
+          vesselName: v.name,
+          feasible,
+          constraints: {
+            draft: { allowed: dest.draft, required: v.draftLimit, ok: v.draftLimit <= dest.draft },
+            loa: { allowed: dest.loa, required: v.loaLimit, ok: v.loaLimit <= dest.loa },
+            beam: { allowed: dest.beam, required: v.beamLimit, ok: v.beamLimit <= dest.beam }
+          },
+          efficiencyScore: feasible ? Math.round(100 / v.costFactor) : 0,
+          loadDays,
+          dischargeDays,
+          transitDays,
+          waitingDays: dest.waitingDays,
+          totalDays: parseFloat(totalDays.toFixed(1)),
+          costPerTon,
+          totalCost: Math.round(totalCost)
+        };
+      });
+
+      // Find recommended vessel
+      const feasibleSorted = results
+        .filter(r => r.feasible)
+        .sort((a, b) => a.totalCost - b.totalCost);
+
+      const recommended = feasibleSorted[0] || null;
 
       return {
-        vesselId: v.id,
-        vesselName: v.name,
-        feasible,
-        constraints: {
-          draft: { allowed: dest.draft, required: v.draftLimit, ok: v.draftLimit <= dest.draft },
-          loa: { allowed: dest.loa, required: v.loaLimit, ok: v.loaLimit <= dest.loa },
-          beam: { allowed: dest.beam, required: v.beamLimit, ok: v.beamLimit <= dest.beam }
-        },
-        efficiencyScore: feasible ? Math.round(100 / v.costFactor) : 0,
-        loadDays,
-        dischargeDays,
-        transitDays,
-        waitingDays: dest.waitingDays,
-        totalDays: parseFloat(totalDays.toFixed(1)),
-        costPerTon,
-        totalCost: Math.round(totalCost)
+        results,
+        recommendedVessel: recommended,
+        destPort: dest,
+        originPort: origin
       };
     });
+  },
 
-    // Find recommended vessel
-    const feasibleSorted = results
-      .filter(r => r.feasible)
-      .sort((a, b) => a.totalCost - b.totalCost);
-
-    const recommended = feasibleSorted[0] || null;
-
-    return {
-      results,
-      recommendedVessel: recommended,
-      destPort: dest,
-      originPort: origin
-    };
+  simulateRisk: async (params = {}) => {
+    const {
+      baseRate = 25.0,
+      volatility = 0.15,
+      demurrageRate = 22000.0,
+      waitingDays = 4.0,
+      parcelSize = 70000.0
+    } = params;
+    const query = `?baseRate=${encodeURIComponent(baseRate)}&volatility=${encodeURIComponent(volatility)}&demurrageRate=${encodeURIComponent(demurrageRate)}&waitingDays=${encodeURIComponent(waitingDays)}&parcelSize=${encodeURIComponent(parcelSize)}`;
+    return requestWithFallback(`/risks/simulate${query}`, async () => {
+      await sleep(200);
+      return {
+        simulations: 1000,
+        meanTotalCost: Math.round(parcelSize * baseRate + demurrageRate * waitingDays),
+        p10: Math.round((parcelSize * baseRate + demurrageRate * waitingDays) * 0.9),
+        p90: Math.round((parcelSize * baseRate + demurrageRate * waitingDays) * 1.15)
+      };
+    });
   }
 };

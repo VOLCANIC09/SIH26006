@@ -14,6 +14,7 @@ export default function RiskAnalysis() {
   const [vesselType, setVesselType] = useState('panamax');
   const [waitingDaysInput, setWaitingDaysInput] = useState(4);
   const [dailyRateInput, setDailyRateInput] = useState(22000);
+  const [simulationData, setSimulationData] = useState(null);
 
   // Mock Volatility Index Data for chart
   const volatilityData = [
@@ -41,6 +42,26 @@ export default function RiskAnalysis() {
     }
     loadRisks();
   }, []);
+
+  // Run backend Monte Carlo risk simulation when calculator inputs change
+  useEffect(() => {
+    async function runSim() {
+      if (waitingDaysInput <= 0 || dailyRateInput <= 0) return;
+      try {
+        const sim = await apiService.simulateRisk({
+          baseRate: 24.2,
+          volatility: 0.15,
+          demurrageRate: dailyRateInput,
+          waitingDays: waitingDaysInput,
+          parcelSize: 70000.0
+        });
+        setSimulationData(sim);
+      } catch (err) {
+        console.warn("Demurrage risk simulation API error:", err);
+      }
+    }
+    runSim();
+  }, [vesselType, waitingDaysInput, dailyRateInput]);
 
   // Filter risks by category
   useEffect(() => {
