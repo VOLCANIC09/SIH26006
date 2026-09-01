@@ -1,5 +1,5 @@
-id,name,capacity,draft_limit,loa_limit,beam_limit,suitability,cost_factor
-capesize,Capesize,"120,000 - 180,000 DWT",18.5,290.0,45.0,"Heavy coal, iron ore. Best for Paradip & Gangavaram deep berths only.",1.0
-panamax,Panamax,"60,000 - 80,000 DWT",14.5,225.0,32.2,"Coal, grains. Highly versatile, accepted at most East Coast ports.",1.3
-supramax,Supramax / Ultramax,"50,000 - 60,000 DWT",12.8,200.0,32.2,"Bulk cargo, gears onboard. Excellent for smaller draft ports like Haldia.",1.5
-handysize,Handysize,"15,000 - 35,000 DWT",10.0,170.0,27.0,General dry bulk. Essential for Sagar-Sandheads lighterage and Haldia.,1.8
+id,name,dwt_min,dwt_max,benchmark_dwt,draft_limit,loa_limit,beam_limit,grain_capacity_cbm,cranes,cargo_holds,speed_laden_kn,speed_ballast_kn,fuel_laden_mt_day,fuel_ballast_mt_day,capacity,suitability,cost_factor,source
+capesize,Capesize,130000,210000,182000,18.2,290.0,45.0,198000,,5,14.0,15.0,62.0,62.0,"130,000-210,000 DWT","Coal/iron ore; requires deep draft berths",1.00,"Baltic Exchange BCI standard vessel"
+panamax,Panamax,65000,80000,82500,14.43,229.0,32.25,97000,,7,13.5,14.0,33.0,31.0,"65,000-80,000 DWT","Coal/grain; versatile dry-bulk vessel",1.00,"Baltic Exchange BPI standard vessel"
+supramax,Supramax,50000,60000,63500,13.418,199.98,32.24,80500,"4 x 30 MT",5,14.0,14.0,29.0,25.0,"50,000-60,000 DWT","Coal and dry bulk; geared for smaller terminals",1.00,"Baltic Exchange BSI63 standard vessel"
+handysize,Handysize,28000,42000,38200,10.538,180.0,29.8,47125,"4 x 30 MT",5,14.0,14.0,26.0,24.0,"28,000-42,000 DWT","Smaller dry-bulk cargoes and restricted ports",1.00,"Baltic Exchange Handysize standard vessel"

@@ -1,3 +1,5 @@
+
+> V7 Quantitative Engine: regime detection, model tournament, stress/sensitivity analysis, risk decomposition, and constrained optimization.
 # SIH26006 — MVP Specification
 
 ## 1. Problem

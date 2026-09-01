@@ -1,0 +1,5 @@
+vessel_id,class_reference,india_coal_reference_usd_day,market_link_method,lower_bound_usd_day,upper_bound_usd_day,source,source_note
+capesize,Capesize,15000,india_reference_capped_by_market_proxy,15000,45000,NTPC tender + Baltic Exchange,"NTPC coal-handling tender capped demurrage at USD 15,000/day for Panamax/Capesize; market exposure is additionally scaled from Baltic dry-bulk earnings"
+panamax,Panamax,15000,india_reference_capped_by_market_proxy,10000,30000,NTPC tender + Baltic Exchange,"NTPC coal-handling tender gives an India coal contractual reference; actual fixture demurrage remains charter-party negotiated"
+supramax,Supramax,10500,dwt_scaled_from_panamax_reference,8000,20000,NTPC tender + Baltic Exchange,"Derived from Panamax India reference using benchmark DWT ratio; proxy, not an observed fixture"
+handysize,Handysize,7000,dwt_scaled_from_panamax_reference,5000,15000,NTPC tender + Baltic Exchange,"Derived from Panamax India reference using benchmark DWT ratio; proxy, not an observed fixture"

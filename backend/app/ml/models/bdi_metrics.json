@@ -1,0 +1,26 @@
+{
+  "version": "v6",
+  "walk_forward_mae_bdi": 304.2463854188449,
+  "walk_forward_rmse_bdi": 439.02070676170916,
+  "mape_percent": 19.033355554467644,
+  "naive_persistence_mae_bdi": 346.0740740740741,
+  "mase": 0.8791366017025698,
+  "improvement_vs_naive_percent": 12.086339829743018,
+  "forecast_directional_accuracy_percent": 54.20560747663551,
+  "direction_classifier_accuracy_percent": 59.813084112149525,
+  "interval_coverage_90_percent": 88.88888888888889,
+  "n_backtest": 108,
+  "blend_window_months": 36,
+  "initial_v3_weight": 0.8000000000000003,
+  "development_cutoff_oos_months": 72,
+  "locked_holdout_start": "2023-01-01",
+  "locked_holdout_mae_bdi": 289.05961282300007,
+  "locked_holdout_rmse_bdi": 407.5224652275967,
+  "locked_holdout_naive_mae_bdi": 367.55555555555554,
+  "locked_holdout_improvement_vs_naive_percent": 21.356211747067693,
+  "latest_production_weights": {
+    "v3": 0.46697506370239583,
+    "seasonal": 0.5330249362976042
+  },
+  "criteria_note": "Strict walk-forward with a locked holdout. Hyperparameters were selected only on the first development OOS segment. No holdout observations are used for tuning."
+}

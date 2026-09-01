@@ -1,47 +1,30 @@
+from pathlib import Path
+import pandas as pd
 from sqlalchemy.orm import Session
 from backend.app.database import crud
 from backend.app.ml import prediction
-from backend.app.ml.preprocessing import calculate_time_index
+from backend.app.ml.route_proxy import route_freight_proxy
+
+ROOT=Path(__file__).resolve().parents[3]
 
 def get_forecast_data(db: Session, route_id: str, vessel_id: str) -> dict:
-    # 1. Fetch historical rates from database
-    db_rates = crud.get_rates_for_route_vessel(db, route_id, vessel_id)
-    history = []
-    
-    for r in db_rates:
-        if r.type == "Historical":
-            history.append({
-                "month": r.month,
-                "rate": r.rate,
-                "type": "Historical"
-            })
-            
-    # Sort history chronologically
-    history.sort(key=lambda x: calculate_time_index(x["month"]))
-    
-    # 2. Generate forecast using ML model for next 6 months
-    forecast_months = ["Sep 26", "Oct 26", "Nov 26", "Dec 26", "Jan 27", "Feb 27"]
-    forecast = []
-    
-    for month in forecast_months:
-        try:
-            pred = prediction.predict_rate(route_id, vessel_id, month)
-            forecast.append(pred)
-        except Exception as e:
-            # Fallback simple generator if ML models are missing/erroring
-            print(f"Error predicting rate with ML model: {e}. Using fallback.")
-            base = 25.0
-            if history:
-                base = history[-1]["rate"]
-            forecast.append({
-                "month": month,
-                "rate": round(base + 0.5, 2),
-                "upper": round(base + 2.0, 2),
-                "lower": round(base - 1.0, 2),
-                "type": "Forecast"
-            })
-            
-    return {
-        "history": history,
-        "forecast": forecast
-    }
+    # Australia-Paradip uses the reproducible real-data pipeline. The displayed route rate
+    # is a derived proxy, not a historical observed fixture.
+    if route_id == "aus-par":
+        market=pd.read_csv(ROOT/"data/processed/market_features.csv",parse_dates=["date"]).sort_values("date")
+        hist=market.tail(24)
+        history=[]
+        for _,r in hist.iterrows():
+            rate=route_freight_proxy(r.bdi,vessel_id)
+            history.append({"month":r.date.strftime("%Y-%m"),"rate":round(rate,2),"upper":None,"lower":None,"type":"DerivedProxy"})
+        future=prediction.forecast_route(vessel_id,3)
+        forecast=[]
+        for f in future:
+            lo=route_freight_proxy(f["bdi_p05"],vessel_id); hi=route_freight_proxy(f["bdi_p95"],vessel_id)
+            forecast.append({"month":f["month"],"rate":f["route_freight_proxy_usd_t"],"upper":round(hi,2),"lower":round(lo,2),"type":"ForecastProxy"})
+        return {"history":history,"forecast":forecast,"target_status":"DERIVED_PROXY","forecast_target":"BDI real; route freight derived"}
+
+    # Legacy/non-primary routes use the database-backed records.
+    db_rates=crud.get_rates_for_route_vessel(db,route_id,vessel_id)
+    history=[{"month":r.month,"rate":r.rate,"type":r.type} for r in db_rates if r.type in ("Historical","DerivedProxy")]
+    return {"history":history,"forecast":[]}

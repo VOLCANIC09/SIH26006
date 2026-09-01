@@ -1,6 +1,11 @@
-Dataset,Source,URL,Variables,Frequency,Date Range,Units,License,Status,Team Member,Notes
-Freight,,,,,,,,Not Found,,
-Fuel,,,,,,,,Not Found,,
-Coal,,,,,,,,Not Found,,
-Vessel,,,,,,,,Not Found,,
-Port,,,,,,,,Not Found,,
+Dataset,Source,URL,Variables,Frequency,Date Range,Units,Status,Notes
+Australian coal benchmark,IMF Primary Commodity Prices via FRED,https://fred.stlouisfed.org/series/PCOALAUUSDM,coal benchmark,Monthly,1992-present,USD/metric tonne,REAL SNAPSHOT,2011-2025 snapshot bundled; direct FRED graph endpoint can time out on some networks.
+Brent crude benchmark,IMF Primary Commodity Prices via FRED,https://fred.stlouisfed.org/series/POILBREUSDM,Brent crude,Monthly,1992-present,USD/barrel,REAL SNAPSHOT,2011-2025 snapshot bundled; used as energy/fuel proxy, not marine bunker quote.
+Baltic Dry Index monthly,Technology Industries of Finland / Macrobond (Baltic Exchange source),https://teknologiateollisuus.fi/en/charts/merirahtien-hinnat/,BDI,Monthly,2011-2025,index,REAL SNAPSHOT,Monthly series bundled for reproducibility; ÅSUB PxWeb is documented as an independent public cross-check source.
+Baltic Dry Index public table,ÅSUB PxWeb,https://pxweb.asub.ax/PXWeb/pxweb/en/Statistik/Statistik__TUTRSJ__SJ__Konjunkturstatistik%20för%20sjöfarten/SJ102.px/,BDI,Monthly,2011-2025,index 1985=1000,REAL REFERENCE,Values as of first business day; optional live refresh path.
+Baltic C18,Gladstone to Dhamra Capesize,Baltic Exchange,https://www.balticexchange.com/en/data-services/Circulars/market-announcements-/category-a/2026/-circular-04-26--new-index---baltic-indian-ocean-indices.html,C18 $/mt,Daily benchmark,Live from Feb 2026,$/mt,REAL ROUTE REFERENCE,150000mt coal benchmark; used for route definition/calibration reference only.
+Baltic P9,Gladstone to Dhamra Panamax,Baltic Exchange,https://www.balticexchange.com/en/data-services/Circulars/market-announcements-/category-a/2026/-circular-04-26--new-index---baltic-indian-ocean-indices.html,P9 $/mt,Daily benchmark,Live from Feb 2026,$/mt,REAL ROUTE REFERENCE,80000mt coal benchmark; used for route definition/calibration reference only.
+Paradip constraints,Paradip Port Authority,https://paradipport.gov.in/berth-specifications/,LOA beam draft,Static/current,m,REAL REFERENCE,Verify current berth limits before production deployment.
+Baltic benchmark vessel particulars,Baltic Exchange,https://www.balticexchange.com/en/data-services/routes.html,DWT draft LOA beam speed fuel,Static benchmark,Current,REAL REFERENCE,Reference vessel classes; not individual live vessels.
+Demurrage reference,NTPC public tender,https://ntpctender.ntpc.co.in/Uploads/cor_23903_1_1.pdf,India coal demurrage/dispatch,Contract reference,2022,USD/day,REAL REFERENCE,Used as contractual anchor; actual demurrage remains negotiated.
+Route freight target,Internal route proxy,docs/data_provenance.md,Australia-Paradip freight,Derived,2011-2025,USD/t,PROXY,Not an observed fixture series. Do not report proxy backtest as real freight accuracy.

@@ -352,3 +352,48 @@ export const apiService = {
     });
   }
 };
+
+// Production quantitative engines (FastAPI). These use the same API_BASE as the
+// team's live frontend integration, so VITE_API_URL/proxy configuration is shared.
+export const quantitativeApi = {
+  decisionEngine: async (routeId = 'aus-par', parcelSize = 70000, horizonMonths = 1, simulations = 20000, riskAversion = 0.35) => {
+    const q = new URLSearchParams({ routeId, parcelSize, horizonMonths, simulations, riskAversion });
+    return requestWithFallback(`/decision-engine?${q}`, async () => {
+      throw new Error('Quantitative decision engine is unavailable while the backend is offline.');
+    });
+  },
+
+  monteCarlo: async (vesselId = 'panamax', parcelSize = 70000, baseRate = 22, simulations = 20000) => {
+    const q = new URLSearchParams({ vesselId, parcelSize, baseRate, simulations });
+    return requestWithFallback(`/risks/monte-carlo?${q}`, async () => {
+      throw new Error('Monte Carlo engine is unavailable while the backend is offline.');
+    });
+  },
+
+  overview: async () => {
+    return requestWithFallback('/quant/overview', async () => {
+      throw new Error('Quantitative overview is unavailable while the backend is offline.');
+    });
+  },
+
+  sensitivity: async (parcelSize = 70000, simulations = 5000) => {
+    const q = new URLSearchParams({ parcelSize, simulations });
+    return requestWithFallback(`/quant/sensitivity?${q}`, async () => {
+      throw new Error('Sensitivity analysis is unavailable while the backend is offline.');
+    });
+  },
+
+  stress: async (parcelSize = 70000, simulations = 10000) => {
+    const q = new URLSearchParams({ parcelSize, simulations });
+    return requestWithFallback(`/quant/stress?${q}`, async () => {
+      throw new Error('Stress analysis is unavailable while the backend is offline.');
+    });
+  },
+
+  optimize: async (parcelSize = 70000, riskAversion = 0.35, simulations = 5000, stepT = 5000) => {
+    const q = new URLSearchParams({ parcelSize, riskAversion, simulations, stepT });
+    return requestWithFallback(`/quant/optimize?${q}`, async () => {
+      throw new Error('Quantitative optimization is unavailable while the backend is offline.');
+    });
+  }
+};

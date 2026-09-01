@@ -1,0 +1,216 @@
+{
+  "summary": {
+    "passed": 40,
+    "total": 40
+  },
+  "metrics": {
+    "bdi_mae": 304.2463854188449,
+    "bdi_rmse": 439.02070676170916,
+    "naive_mae": 346.0740740740741,
+    "improvement_percent": 12.086339829743018,
+    "directional_accuracy_percent": 59.813084112149525,
+    "interval_coverage_percent": 88.88888888888889
+  },
+  "tests": [
+    {
+      "test": "coal_australia: file exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "coal_australia: 180 monthly rows",
+      "passed": true,
+      "detail": "180"
+    },
+    {
+      "test": "coal_australia: no missing values",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "coal_australia: positive values",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "brent: file exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "brent: 180 monthly rows",
+      "passed": true,
+      "detail": "180"
+    },
+    {
+      "test": "brent: no missing values",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "brent: positive values",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "BDI: 180 monthly rows",
+      "passed": true,
+      "detail": "180"
+    },
+    {
+      "test": "BDI: no missing values",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "BDI: positive",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "BDI: unique dates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "Feature dataset nonempty",
+      "passed": true,
+      "detail": "156"
+    },
+    {
+      "test": "Feature dataset no NaNs",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "Walk-forward backtest has observations",
+      "passed": true,
+      "detail": "108"
+    },
+    {
+      "test": "Forecast metrics computed",
+      "passed": true,
+      "detail": "ML MAE=304.25; naive=346.07; ML beats baseline=True"
+    },
+    {
+      "test": "Model beats persistence baseline",
+      "passed": true,
+      "detail": "304.25 vs 346.07"
+    },
+    {
+      "test": "Directional classifier accuracy >=55%",
+      "passed": true,
+      "detail": "59.81%"
+    },
+    {
+      "test": "MASE < 1 (beats persistence)",
+      "passed": true,
+      "detail": "0.8791"
+    },
+    {
+      "test": "Residual 90% interval coverage reasonable",
+      "passed": true,
+      "detail": "88.89%"
+    },
+    {
+      "test": "Vessel rows present",
+      "passed": true,
+      "detail": "4"
+    },
+    {
+      "test": "Panamax DWT reference",
+      "passed": true,
+      "detail": "82500"
+    },
+    {
+      "test": "Panamax LOA reference",
+      "passed": true,
+      "detail": "229"
+    },
+    {
+      "test": "Panamax beam reference",
+      "passed": true,
+      "detail": "32.25"
+    },
+    {
+      "test": "Panamax draft reference",
+      "passed": true,
+      "detail": "14.43"
+    },
+    {
+      "test": "Voyage days calculation",
+      "passed": true,
+      "detail": "{'load_days': 2.8, 'discharge_days': 2.8, 'transit_days': 15, 'waiting_days': 2, 'total_days': 22.6}"
+    },
+    {
+      "test": "Demurrage capesize bounded",
+      "passed": true,
+      "detail": "{'expected_usd_day': 15000.0, 'lower_usd_day': 15000.0, 'upper_usd_day': 45000.0, 'india_reference_usd_day': 15000.0, 'basis': 'india_reference_capped_by_market_proxy', 'source': 'NTPC tender + Baltic Exchange'}"
+    },
+    {
+      "test": "Demurrage panamax bounded",
+      "passed": true,
+      "detail": "{'expected_usd_day': 15000.0, 'lower_usd_day': 10000.0, 'upper_usd_day': 30000.0, 'india_reference_usd_day': 15000.0, 'basis': 'india_reference_capped_by_market_proxy', 'source': 'NTPC tender + Baltic Exchange'}"
+    },
+    {
+      "test": "Demurrage supramax bounded",
+      "passed": true,
+      "detail": "{'expected_usd_day': 10500.0, 'lower_usd_day': 8000.0, 'upper_usd_day': 20000.0, 'india_reference_usd_day': 10500.0, 'basis': 'dwt_scaled_from_panamax_reference', 'source': 'NTPC tender + Baltic Exchange'}"
+    },
+    {
+      "test": "Demurrage handysize bounded",
+      "passed": true,
+      "detail": "{'expected_usd_day': 7000.0, 'lower_usd_day': 5000.0, 'upper_usd_day': 15000.0, 'india_reference_usd_day': 7000.0, 'basis': 'dwt_scaled_from_panamax_reference', 'source': 'NTPC tender + Baltic Exchange'}"
+    },
+    {
+      "test": "Pre-MC state ready",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "Pre-MC not run",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "Pre-MC has forecast",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "Forecast months advance",
+      "passed": true,
+      "detail": "['2026-01', '2026-02', '2026-03']"
+    },
+    {
+      "test": "Pre-MC has vessels",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "Vessel names are populated",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "API docs responds",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "test": "Forecast API responds",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "test": "Forecast API labels proxy",
+      "passed": true,
+      "detail": "DERIVED_PROXY"
+    },
+    {
+      "test": "Pre-MC API responds",
+      "passed": true,
+      "detail": "200"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "retrieved_at_utc": "2026-08-29T14:25:03.842808+00:00",
+  "mode": "reproducible_local_snapshot",
+  "sources": {
+    "coal_australia": {
+      "status": "cached",
+      "path": "/mnt/data/best/work/SIH26006_updated/data/raw/market/coal_australia.csv",
+      "type": "real_snapshot"
+    },
+    "brent": {
+      "status": "cached",
+      "path": "/mnt/data/best/work/SIH26006_updated/data/raw/market/brent.csv",
+      "type": "real_snapshot"
+    },
+    "bdi_monthly": {
+      "status": "cached",
+      "path": "/mnt/data/best/work/SIH26006_updated/data/raw/market/bdi_monthly.csv",
+      "type": "real_snapshot"
+    }
+  }
+}

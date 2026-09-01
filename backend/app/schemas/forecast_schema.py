@@ -14,3 +14,5 @@ class ForecastItem(BaseModel):
 class ForecastResponse(BaseModel):
     history: List[ForecastItem]
     forecast: List[ForecastItem]
+    target_status: Optional[str] = None
+    forecast_target: Optional[str] = None

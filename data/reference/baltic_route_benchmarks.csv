@@ -1,0 +1,6 @@
+code,route,vessel,cargo,unit,public_trial,live_publication,source,status
+C18,Gladstone -> Dhamra,Capesize,150000 mt coal,$/mt,2026-01-19,2026-02-09,Baltic Exchange,REAL_ROUTE_REFERENCE
+P9,Gladstone -> Dhamra,Panamax,80000 mt coal,$/mt,2026-01-19,2026-02-09,Baltic Exchange,REAL_ROUTE_REFERENCE
+P10,South Africa -> India,Panamax,coal,$/day,2026-01-19,2026-02-09,Baltic Exchange,REAL_ROUTE_REFERENCE
+S11,East Coast India -> China,Ultramax,bulk,$/day,2026-01-19,2026-02-09,Baltic Exchange,REAL_ROUTE_REFERENCE
+S12,Arabian Gulf -> India,Ultramax,bulk,$/day,2026-01-19,2026-02-09,Baltic Exchange,REAL_ROUTE_REFERENCE

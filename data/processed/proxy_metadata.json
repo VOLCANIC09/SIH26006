@@ -1,0 +1,29 @@
+{
+  "target": "route freight estimate $/t",
+  "route": "Australia -> Paradip",
+  "status": "DERIVED_PROXY",
+  "not_observed_fixture": true,
+  "formula": "base_rate_vessel * (BDI/1500)^0.55 * vessel_factor",
+  "base_rates_usd_t": {
+    "capesize": 18.5,
+    "panamax": 22.0,
+    "supramax": 25.0,
+    "handysize": 30.0
+  },
+  "vessel_factors": {
+    "capesize": 1.0,
+    "panamax": 1.18,
+    "supramax": 1.3,
+    "handysize": 1.48
+  },
+  "real_inputs": [
+    "Baltic Dry Index",
+    "Australian coal benchmark",
+    "Brent crude benchmark"
+  ],
+  "route_benchmarks": [
+    "Baltic C18 Gladstone-Dhamra Capesize",
+    "Baltic P9 Gladstone-Dhamra Panamax"
+  ],
+  "forecast_method": "BDI model v4: v3 ML/AR component dynamically blended with damped seasonal Holt-Winters using an 18-month trailing-error window; route rate remains a derived proxy."
+}
