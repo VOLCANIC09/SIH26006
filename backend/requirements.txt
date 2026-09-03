@@ -10,3 +10,4 @@ pydantic>=2.0
 requests>=2.31
 
 statsmodels>=0.14
+httpx2>=2.0

@@ -76,3 +76,5 @@ Required:
 
 Purpose:
 Capture seasonal patterns.
+
+- httpx2>=2.0 (FastAPI/Starlette TestClient support)

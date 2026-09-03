@@ -1,4 +1,2 @@
-
 statsmodels>=0.14
-
-statsmodels>=0.14
+httpx2>=2.0

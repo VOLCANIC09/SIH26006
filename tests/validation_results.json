@@ -4,10 +4,10 @@
     "total": 40
   },
   "metrics": {
-    "bdi_mae": 304.2463854188449,
-    "bdi_rmse": 439.02070676170916,
+    "bdi_mae": 304.8472236335829,
+    "bdi_rmse": 439.07725379367884,
     "naive_mae": 346.0740740740741,
-    "improvement_percent": 12.086339829743018,
+    "improvement_percent": 11.912724335330276,
     "directional_accuracy_percent": 59.813084112149525,
     "interval_coverage_percent": 88.88888888888889
   },
@@ -90,12 +90,12 @@
     {
       "test": "Forecast metrics computed",
       "passed": true,
-      "detail": "ML MAE=304.25; naive=346.07; ML beats baseline=True"
+      "detail": "ML MAE=304.85; naive=346.07; ML beats baseline=True"
     },
     {
       "test": "Model beats persistence baseline",
       "passed": true,
-      "detail": "304.25 vs 346.07"
+      "detail": "304.85 vs 346.07"
     },
     {
       "test": "Directional classifier accuracy >=55%",
@@ -105,7 +105,7 @@
     {
       "test": "MASE < 1 (beats persistence)",
       "passed": true,
-      "detail": "0.8791"
+      "detail": "0.8809"
     },
     {
       "test": "Residual 90% interval coverage reasonable",

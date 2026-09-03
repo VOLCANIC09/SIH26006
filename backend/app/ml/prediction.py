@@ -28,7 +28,7 @@ def forecast_route(vessel_id,months=3):
  _load(); hist=_history.copy(); current_date=hist.date.iloc[-1]; bdi_series=list(hist.bdi.astype(float));coal_series=list(hist.coal_price_usd_t.astype(float));brent_series=list(hist.brent_usd_bbl.astype(float)); forecasts=[]
  for _ in range(months):
   d=current_date+pd.offsets.MonthBegin(1); X=_feature_row(bdi_series,coal_series,brent_series,d)
-  h=float(_model['hgb'].predict(X)[0]); ar=float(AutoReg(np.asarray(bdi_series),lags=_model['ar_lags'],trend=_model['ar_trend'],old_names=False).fit().predict(start=len(bdi_series),end=len(bdi_series))[0]); pers=float(bdi_series[-1])
+  h=float(_model['hgb'].predict(X)[0]); ar=float(AutoReg(np.asarray(bdi_series),lags=_model['ar_lags'],trend=_model['ar_trend']).fit().predict(start=len(bdi_series),end=len(bdi_series))[0]); pers=float(bdi_series[-1])
   v3=.30*pers+.45*h+.25*ar
   seasonal=float(ExponentialSmoothing(np.asarray(bdi_series),trend='add',seasonal='add',seasonal_periods=12,damped_trend=True,initialization_method='estimated').fit(optimized=True).forecast(1)[0])
   w=_model['production_latest_weights']; pred=max(0.0,w['v3']*v3+w['seasonal']*seasonal)
